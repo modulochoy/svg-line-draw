@@ -1,14 +1,18 @@
-var scale = 1.0;
-var rainbowColors = ['#FF8F8F', '#FFCC66', '#FFFA66', '#A0F7BD', '#A0E1F7', '#AA9CFF','#E18FFF'];
-var rainbowStrings = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'];
+var PI_BY_3 = round2dec(Math.PI/3);
+var PI_BY_6 = round2dec(Math.PI/6);
+var PHI = 1.618;
 
 var GRID_SIZE_PX = 1000;
-var GRID_STROKE_HEX = '#ff0000';
+var GRID_STROKE_HEX = '#ff9999';
 var GRID_FILL_COLOR = 'none';
 var GRID_STROKE_WIDTH = 0.5;
 var CIRCLE_RADIUS = 50;
 var CIRCLE_FILL_COLOR = 'none';
 var CIRCLE_STROKE_WIDTH = 0.5;
+
+var scale = 1.0;
+var rainbowColors = ['#FF8F8F', '#FFCC66', '#FFFA66', '#A0F7BD', '#A0E1F7', '#AA9CFF','#E18FFF'];
+var rainbowStrings = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'];
 
 var draw = SVG('drawing');
 //draw.rect(100,100).animate().fill('#f03').move(100,100)
@@ -91,27 +95,28 @@ function fib (count) {
 /*
  * @param x, y, are centre of circle
  */
-function cartCircle(x, y, r, c) {
+function cartCircle(x, y, r, c, w) {
     var strokeColor = c ? c : '#000';
-    draw.circle(2*r).move(translateXCoord(x)-r, translateYCoord(y)-r).fill(CIRCLE_FILL_COLOR).stroke({width: CIRCLE_STROKE_WIDTH, color: strokeColor});
+    var strokeWidth = w ? w : CIRCLE_STROKE_WIDTH;
+    draw.circle(2*r).move(translateXCoord(x)-r, translateYCoord(y)-r).fill(CIRCLE_FILL_COLOR).stroke({width: strokeWidth, color: strokeColor});
 }
 
 /*
  * @param d is distance from centre
  */
-function polarCircle(theta, r, _d, c) {
+function polarCircle(theta, r, _d, c, w) {
     var d = _d ? _d : 0;
     //var x = circleCoordAdjust(translateXCoord(calcXCoord(theta, r)), r);
     //var y = circleCoordAdjust(translateYCoord(calcYCoord(theta, r)), r);
     //draw.circle(2*r).move(x, y).fill(CIRCLE_FILL_COLOR).stroke({width: CIRCLE_STROKE_WIDTH});
     var x = calcXCoord(theta, r+d);
     var y = calcYCoord(theta, r+d);
-    cartCircle(x, y, r, c);
+    cartCircle(x, y, r, c, w);
 }
 
-function polarCircleRing(theta, angle, r, distance, numCircles, color) {
+function polarCircleRing(theta, angle, r, distance, numCircles, color, strokeWidth) {
     for (var i = 0; i < numCircles; i++) {
-	polarCircle((i*theta)+angle, r, distance, color);
+	polarCircle((i*theta)+angle, r, distance, color, strokeWidth);
     }
 }
 
@@ -123,7 +128,7 @@ draw.line(0, GRID_SIZE_PX/2, GRID_SIZE_PX, GRID_SIZE_PX/2).stroke({ width: 0.5, 
 //draw.line(GRID_SIZE_PX/2, GRID_SIZE_PX/2, GRID_SIZE_PX/2+CIRCLE_RADIUS, GRID_SIZE_PX/2-CIRCLE_RADIUS).stroke({ width: 0.5, color: GRID_STROKE_HEX});
 
 //circles
-cartCircle(0, 0, CIRCLE_RADIUS);
+cartCircle(0, 0, CIRCLE_RADIUS, '#ddd');
 //polarCircle(0, CIRCLE_RADIUS);
 //cartCircle(CIRCLE_RADIUS, CIRCLE_RADIUS, CIRCLE_RADIUS);
 //polarCircle(0, CIRCLE_RADIUS);
@@ -131,17 +136,21 @@ cartCircle(0, 0, CIRCLE_RADIUS);
 
 var i = 0;
 var numCircles = 6;
-
+/*
 for (i = 0; i < numCircles; i++) {
     polarCircle(i*(Math.PI/3), CIRCLE_RADIUS, 0);
 }
+*/
+polarCircleRing(Math.PI/3, 0*(Math.PI/6), CIRCLE_RADIUS, 0*CIRCLE_RADIUS*(1/Math.SQRT2), numCircles, '#ccc');
+polarCircleRing(Math.PI/3, 1*(Math.PI/6), CIRCLE_RADIUS, (1)*CIRCLE_RADIUS*(1/Math.SQRT2), numCircles, '#aaa');
+//polarCircleRing(Math.PI/3, 2*(Math.PI/6), CIRCLE_RADIUS, (Math.SQRT2)*CIRCLE_RADIUS*(1/Math.SQRT2), numCircles, '#999');
 
+polarCircleRing(Math.PI/3, 2*(Math.PI/6), CIRCLE_RADIUS, 1*PHI*CIRCLE_RADIUS, numCircles, 'red');
+/*
 for (i = 0; i < numCircles; i++) {
-    polarCircle(i*(Math.PI/3), CIRCLE_RADIUS, CIRCLE_RADIUS*i, '#ff00ff');
+    polarCircle(i*(Math.PI/3), CIRCLE_RADIUS, CIRCLE_RADIUS*fib(i), '#ff00ff', 2);
 }
-
-polarCircleRing(Math.PI/3, Math.PI/6, CIRCLE_RADIUS, CIRCLE_RADIUS/Math.SQRT2, 6);
-polarCircleRing(Math.PI/3, 0, CIRCLE_RADIUS, CIRCLE_RADIUS, 6, '#000000');
+*/
 
 //var circle = draw.circle(100).move(100,100).fill('#fff').stroke({width: 0.5});
 
